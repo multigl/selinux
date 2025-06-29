@@ -65,6 +65,9 @@
     use: "{{ (__selinux_is_ostree | d(false)) |
              ternary('ansible.posix.rhel_rpm_ostree', omit) }}"
   when:
+    # this is a hack as ucore images do not (and should not) include grubby. the underlying python here doesn't work
+    # with bootupd yet and fixing that is too much work. Make sure you've got selinux enabled already (it probably is)
+    - not __selinux_is_ostree
     - ansible_facts["os_family"] == "RedHat"
     - ansible_facts["distribution_major_version"] is version("8", ">=")
 
